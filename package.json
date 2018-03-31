@@ -1,0 +1,23 @@
+{
+  "name": "dispachito",
+  "version": "0.1.0",
+  "description": "Event dispatcher/emitter for javascript node and browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --config webpack.dev.js --watch",
+    "dist": "webpack --config webpack.prod.js"
+  },
+  "keywords": [
+    "event emitter",
+    "event dispatcher"
+  ],
+  "author": "alexhoma <alexcm.14@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-loader": "^4.1.0",
+    "typescript": "^2.8.1",
+    "webpack": "^4.4.1",
+    "webpack-cli": "^2.0.13"
+  }
+}
