@@ -7,16 +7,17 @@ module.exports = function dispachito() {
     let events: EventHandlerMap = Object.create(null);
 
     function on(id: string, event: EventHandler): void {
-        if (events[id]) {
-            events[id].push(event)
-        } else {
-            events[id] = [];
-            events[id].push(event)
-        }
+        events[id]
+            ? events[id].push(event)
+            : (events[id] = []).push(event)
     }
 
     function off(id: string, event: EventHandler): void {
-        // TODO: implement method
+        if (events[id]) {
+            events[id].splice(
+                events[id].indexOf(event)
+            )
+        }
     }
 
     function dispatch(id: string, data: any): void {
@@ -26,4 +27,4 @@ module.exports = function dispachito() {
     }
 
     return {on, off, dispatch}
-}
+};
