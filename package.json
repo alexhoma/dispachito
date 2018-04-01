@@ -2,15 +2,14 @@
   "name": "dispachito",
   "version": "0.1.0",
   "description": "Event dispatcher/emitter for javascript node and browser",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "jsnext:main": "lib-esm/index.js",
+  "main": "./dist/dispachito.min.js",
   "scripts": {
-    "clean": "rm -rf ./dist ./lib ./lib-esm",
+    "clean": "rm -rf ./dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --config webpack.dev.js --watch",
-    "build": "webpack --config webpack.prod.js && webpack --config webpack.dev.js",
-    "dist": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && npm run build"
+    "dev": "NODE_ENV=development webpack",
+    "dev:watch": "npm run dev --watch",
+    "build": "NODE_ENV=production webpack",
+    "dist": "npm run clean && tsc && npm run dev && npm run build"
   },
   "keywords": [
     "event emitter",
@@ -25,6 +24,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^9.6.1",
     "ts-loader": "^4.1.0",
     "typescript": "^2.8.1",
     "webpack": "^4.4.1",

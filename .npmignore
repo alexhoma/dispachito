@@ -1,6 +1,6 @@
 .*
 tsconfig.json
-webpack.dev.js
+webpack.config.js
 webpack.prod.js
 
 node_modules/

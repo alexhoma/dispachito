@@ -3,7 +3,7 @@ type EventHandlerMap = {
     [id: string]: Array<EventHandler>
 }
 
-export function dispachito() {
+module.exports = function dispachito() {
     let events: EventHandlerMap = Object.create(null);
 
     function on(id: string, event: EventHandler): void {

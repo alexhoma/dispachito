@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        "moduleResolution": "node",
+        "outDir": "./dist/esm",
+        "noImplicitAny": true,
         "module": "commonjs",
-        "target": "es5",
         "lib": [ "es2015", "dom" ],
-        "outDir": "lib",
-        "allowSyntheticDefaultImports": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "forceConsistentCasingInFileNames": true,
-        "sourceMap": true,
-        "declaration": true
+        "target": "es5",
+        "types": [
+            "node"
+        ]
     },
     "include": [
         "src/**/*"
