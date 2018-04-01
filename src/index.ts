@@ -3,15 +3,32 @@ type EventHandlerMap = {
     [id: string]: Array<EventHandler>
 }
 
+/**
+ * Dispachito entry point
+ *
+ * @returns {dispachito}
+ */
 module.exports = function dispachito() {
     let events: EventHandlerMap = Object.create(null);
 
+    /**
+     * Subscribe an event
+     *
+     * @param {string} id
+     * @param {EventHandler} event
+     */
     function on(id: string, event: EventHandler): void {
         events[id]
             ? events[id].push(event)
             : (events[id] = []).push(event)
     }
 
+    /**
+     * Unsubscribe an event
+     *
+     * @param {string} id
+     * @param {EventHandler} event
+     */
     function off(id: string, event: EventHandler): void {
         if (events[id]) {
             events[id].splice(
@@ -20,6 +37,12 @@ module.exports = function dispachito() {
         }
     }
 
+    /**
+     * Dispatch an event with data
+     *
+     * @param {string} id
+     * @param data
+     */
     function dispatch(id: string, data: any): void {
         events[id]
             ? events[id].map(event => event(data))
