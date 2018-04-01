@@ -17,6 +17,9 @@ module.exports = {
     },
     output: {
         filename: 'dispachito.min.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'umd',
+        library: 'dispachito',
+        umdNamedDefine: true
     }
 };

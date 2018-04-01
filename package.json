@@ -2,11 +2,12 @@
   "name": "dispachito",
   "version": "0.1.0",
   "description": "Event dispatcher/emitter for javascript node and browser",
-  "main": "index.js",
+  "main": "./index.es.js",
   "scripts": {
+    "clean": "rm -rf ./dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --config webpack.dev.js --watch",
-    "dist": "webpack --config webpack.prod.js"
+    "dist": "npm run clean && tsc && tsc -m es6 --outDir es6 && webpack --config webpack.prod.js"
   },
   "keywords": [
     "event emitter",
