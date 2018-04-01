@@ -1,6 +1,7 @@
 .*
-**/tsconfig.json
-**/webpack.config.js
+tsconfig.json
+webpack.dev.js
+webpack.prod.js
 
 node_modules/
 src/
