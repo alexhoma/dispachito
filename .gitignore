@@ -1,6 +1,5 @@
 /node_modules/
 .idea
+example.html
 
 dist/
-lib/
-lib-esm/
