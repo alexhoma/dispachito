@@ -21,7 +21,6 @@ export function dispachito() {
         events[id]
             ? events[id].push(event)
             : (events[id] = []).push(event)
-        console.log(events)
     }
 
     /**
@@ -37,7 +36,6 @@ export function dispachito() {
                 1
             )
         }
-        console.log(events)
     }
 
     /**
@@ -50,7 +48,6 @@ export function dispachito() {
         events[id]
             ? events[id].map(event => event(data))
             : null
-        console.log(events)
     }
 
     return {on, off, dispatch}
