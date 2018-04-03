@@ -1,10 +1,17 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/esm",
+        "outDir": ".",
         "noImplicitAny": true,
+        "moduleResolution": "node",
         "module": "commonjs",
-        "lib": [ "es2015", "dom" ],
+        "lib": [ "es6", "dom" ],
         "target": "es5",
+        "sourceMap": true,
+        "declaration": true,
+        "allowSyntheticDefaultImports": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "forceConsistentCasingInFileNames": true,
+        "sourceRoot": "./src/index.ts",
         "types": [
             "node"
         ]
