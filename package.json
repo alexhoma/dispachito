@@ -1,0 +1,24 @@
+{
+  "name": "dispachito",
+  "version": "0.1.0",
+  "description": "Best javascript latino event dispatcher",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexhoma/dispachito.git"
+  },
+  "keywords": [
+    "event-bus",
+    "side-effects-free",
+    "pub-sub"
+  ],
+  "author": "alexhoma <alexcm.14@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexhoma/dispachito/issues"
+  },
+  "homepage": "https://github.com/alexhoma/dispachito#readme"
+}
