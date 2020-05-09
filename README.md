@@ -27,5 +27,63 @@ d.event(function whatTimeIsIt({ now }, payload) {
 });
 
 d.dispatch('whatTimeIsIt', 'Current time is: ');
-// result: Current time is 102013213
+// result: Current time is: 1588975886908
+```
+
+## Usage with store
+
+Setup your dispachito instance:
+
+```javascript
+import dispachito, { withStore } from 'dispachito';
+
+const d = withStore(dispachito(), { counter: 0 });
+
+d.event(function increment({ state, now }, payload) {
+  return {
+    state: {
+      counter: state.counter + 1,
+    },
+    // another side effect
+    log: payload + now,
+  };
+});
+
+export default d;
+```
+
+And then in the view side:
+
+```javascript
+import React from 'react';
+import { render } from 'react-dom';
+import { Subscribe, connect } from 'dispachito/react';
+import d from './setup';
+
+const StateAwareCounter = connect(
+  function mapToProps(state) {
+    return {
+      count: state.counter,
+    };
+  },
+  function dispatchToProps(dispatch) {
+    return {
+      increment: () => dispatch('increment'),
+    };
+  }
+)(function Counter({ count, increment }) {
+  return (
+    <>
+      <button onCLick={increment}>Increase</button>
+      <div>Current count: {count}</div>
+    </>
+  );
+});
+
+ReactDOM.render(
+  <Subscribe store={d}>
+    <StateAwareCounter />
+  </Subscribe>,
+  document.querySelector('#root')
+);
 ```
