@@ -3,56 +3,58 @@ import dispachito from './index';
 beforeEach(() => jest.resetAllMocks());
 
 describe('dispachito() should', () => {
+  let d;
   const eventMock = jest.fn((causes, payload) => payload);
   const effectMock = jest.fn((args) => args);
   const causeMock = jest.fn();
 
+  beforeEach(() => {
+    jest.resetAllMocks();
+    d = dispachito();
+  });
+
   test('fire a single event', () => {
-    const d = dispachito();
-    d.event(function anEventName() {
+    d.event('eventId', () => {
       eventMock();
       return {};
     });
 
-    d.dispatch('anEventName');
+    d.dispatch('eventId');
 
     expect(eventMock).toHaveBeenCalledTimes(1);
   });
 
   test('fire a single event with payload', () => {
-    const d = dispachito();
-    d.event(function anEventName(_, payload) {
+    d.event('eventId', (_, payload) => {
       eventMock(_, payload);
       return {};
     });
 
-    d.dispatch('anEventName', 'foobar payload');
+    d.dispatch('eventId', 'foobar payload');
 
     expect(eventMock).toHaveBeenCalledWith({}, 'foobar payload');
   });
 
   test('fire many events registered to a single id', () => {
-    const d = dispachito();
-    function anEventName() {
+    d.event('anEventId', function aHandler() {
       eventMock();
       return {};
-    }
-    d.event(anEventName);
-    d.event(anEventName);
+    });
+    d.event('anEventId', function anotherHandler() {
+      eventMock();
+      return {};
+    });
 
-    d.dispatch('anEventName');
+    d.dispatch('anEventId');
 
     expect(eventMock).toHaveBeenCalledTimes(2);
   });
 
   test('fire an event that causes a side effect', () => {
-    const d = dispachito();
-    d.effect(function anEffectName(args) {
-      effectMock(args);
-    });
-    d.event(function anEventThatCausesAnEffect() {
+    d.effect('anEffectId', effectMock);
+    d.event('anEventThatCausesAnEffect', () => {
       return {
-        anEffectName: null,
+        anEffectId: null,
       };
     });
 
@@ -62,13 +64,10 @@ describe('dispachito() should', () => {
   });
 
   test('fire an event that causes a side effect with arguments', () => {
-    const d = dispachito();
-    d.effect(function anEffectName(args) {
-      effectMock(args);
-    });
-    d.event(function anEventThatCausesAnEffectWithArguments() {
+    d.effect('anEffectId', effectMock);
+    d.event('anEventThatCausesAnEffectWithArguments', () => {
       return {
-        anEffectName: 'effect arguments',
+        anEffectId: 'effect arguments',
       };
     });
 
@@ -78,17 +77,12 @@ describe('dispachito() should', () => {
   });
 
   test('fire an event that causes many side effects', () => {
-    const d = dispachito();
-    d.effect(function anEffectName(args) {
-      effectMock(args);
-    });
-    d.effect(function anotherEffect(args) {
-      effectMock(args);
-    });
-    d.event(function anEventThatCausesAnEffectWithArguments() {
+    d.effect('anEffectId', effectMock);
+    d.effect('anotherEffectId', effectMock);
+    d.event('anEventThatCausesAnEffectWithArguments', () => {
       return {
-        anEffectName: 'effect arguments',
-        anotherEffect: { foo: 123 },
+        anEffectId: 'effect arguments',
+        anotherEffectId: { foo: 123 },
       };
     });
 
@@ -99,16 +93,19 @@ describe('dispachito() should', () => {
   });
 
   test('fire an event that needs a side cause', () => {
-    const d = dispachito();
     const spyEvent = jest.fn();
-    d.cause(function aSideCause() {
+    d.cause('aSideCauseId', () => {
       causeMock();
       return 'side-cause-value';
     });
-    d.event(function anEventWithSideCauses({ aSideCause }) {
-      spyEvent(aSideCause);
-      return {};
-    });
+    d.event(
+      'anEventWithSideCauses',
+      ({ aSideCauseId }) => {
+        spyEvent(aSideCauseId);
+        return {};
+      },
+      ['aSideCauseId']
+    );
 
     d.dispatch('anEventWithSideCauses');
 
@@ -116,34 +113,37 @@ describe('dispachito() should', () => {
     expect(spyEvent).toHaveBeenCalledWith('side-cause-value');
   });
 
-  test('fire an event that needs many side causes', () => {
-    const d = dispachito();
-    const spyEvent = jest.fn();
-    d.cause(function aSideCause() {
-      causeMock();
-      return 'side-cause-value';
-    });
-    d.cause(function anotherSideCause() {
-      causeMock();
-      return 'another-side-cause-value';
-    });
-    d.event(function anEventWithSideCauses({ aSideCause, anotherSideCause }) {
-      spyEvent(aSideCause, anotherSideCause);
-      return {};
-    });
+  // test('fire an event that needs many side causes', () => {
+  //   const spyEvent = jest.fn();
+  //   d.cause('aSideCauseId', () => {
+  //     causeMock();
+  //     return 'side-cause-value';
+  //   });
+  //   d.cause('anotherSideCauseId', () => {
+  //     causeMock();
+  //     return 'side-cause-value';
+  //   });
+  //   d.event(
+  //     'anEventWithSideCauses',
+  //     d.with(
+  //       ['aSideCauseId', 'notherSideCauseId'],
+  //       ({ aSideCauseId, anotherSideCauseId }) => {
+  //         spyEvent(aSideCauseId, anotherSideCauseId);
+  //         return {};
+  //       }
+  //     )
+  //   );
 
-    d.dispatch('anEventWithSideCauses');
+  //   d.dispatch('anEventWithSideCauses');
 
-    expect(causeMock).toHaveBeenCalled();
-    expect(spyEvent).toHaveBeenCalledWith(
-      'side-cause-value',
-      'another-side-cause-value'
-    );
-  });
+  //   expect(causeMock).toHaveBeenCalled();
+  //   expect(spyEvent).toHaveBeenCalledWith(
+  //     'side-cause-value',
+  //     'another-side-cause-value'
+  //   );
+  // });
 
   test('throw an error when dispatching an unregistered event', () => {
-    const d = dispachito();
-
     expect(() => {
       d.dispatch('unregisteredEventName');
     }).toThrow(Error('Unregistered event id: unregisteredEventName'));

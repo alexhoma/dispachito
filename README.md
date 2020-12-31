@@ -7,27 +7,57 @@ A javascript event dispatcher with flow, a lot of flow.
 ```javascript
 import dispachito from 'dispachito';
 
-// side effect function
-const log = (e) => console.log(e);
-// side cause function
-const now = () => Date.now();
-
 // instance dispachito
-const d = dispachito();
+const { event, with, effect, dispatch } = dispachito();
 
-// register your side effects and side causes
-d.effect(log);
-d.cause(now);
+function currentTime() {
+  return { currentTime: Date.now() };
+}
 
-// register your pure events
-d.event(function whatTimeIsIt({ now }, payload) {
-  return {
-    log: payload + now,
-  };
+cause(currentTime);
+effect(console.log);
+
+const e = event(
+  'whatTimeIsIt',
+  function whatTimeIsIt({ now }, payload) {
+    return {
+      log: payload + now,
+    };
+  }),
+);
+
+e.with(currentTime);
+e.describe();
+e.dispatch();
+
+dispatch('whatTimeIsIt', 'Current time is: ');
+// result: Current time is: 1588975886908
+```
+
+```javascript
+import { whatTimeIsIt } from './events';
+
+test('test event example', () => {
+  const now = () => 1234;
+  const event = whatTimeIsIt().with(now);
+
+  const effect = event.describe('Current time: ');
+
+  expect(effect).toEqual({
+    log: 'Current time: 1234421312',
+  });
 });
 
-d.dispatch('whatTimeIsIt', 'Current time is: ');
-// result: Current time is: 1588975886908
+test('test event example', () => {
+  const now = () => ({ now: 1234421312 });
+  const event = whatTimeIsIt({ now }, 'Current time is: ');
+
+  const effect = event.describe();
+
+  expect(effect).toEqual({
+    log: 'Current time is: 1234421312',
+  });
+});
 ```
 
 ## Usage with store

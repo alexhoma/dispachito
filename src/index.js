@@ -3,18 +3,6 @@ export default function dispachito() {
   const causes = {};
   const effects = {};
 
-  function extractSideCauseIds(event) {
-    const causes = event.toString().match(/function\s.*?\({([^}]*)\}/);
-
-    return causes
-      ? causes[1]
-          .split(',')
-          .filter(Boolean)
-          .map((arg) => arg.replace(/\/\*.*\*\//, ''))
-          .map((arg) => arg.replace(/(\r\n\t|\n|\r\t)/gm, '').trim())
-      : [];
-  }
-
   function extractSideCausesData(sideCauseIds) {
     return sideCauseIds.reduce(
       (acc, id) => ({
@@ -32,25 +20,30 @@ export default function dispachito() {
   }
 
   return {
-    effect(effect) {
-      effects[effect.name] = effect;
+    effect(id, handler) {
+      effects[id] = handler;
     },
-    cause(cause) {
+    with(cause, handler) {
       causes[cause.name] = cause;
+      return [handler, cause.name];
     },
-    event(event) {
-      events[event.name]
-        ? events[event.name].push(event)
-        : (events[event.name] = []).push(event);
+    event(id, handler) {
+      const definition =
+        typeof handler === 'function' ? [handler, []] : handler;
+
+      events[id]
+        ? events[id].push(definition)
+        : (events[id] = []).push(definition);
+
+      return () => {};
     },
     dispatch(id, payload) {
       if (!events[id]) {
         throw new Error('Unregistered event id: ' + id);
       }
 
-      events[id].map(function dispatchEvent(event) {
-        const sideCauseIds = extractSideCauseIds(event);
-        const sideCausesData = extractSideCausesData(sideCauseIds);
+      events[id].map(function fire([event, causes]) {
+        const sideCausesData = extractSideCausesData(causes);
         const sideEffects = event(sideCausesData, payload);
         executeSideEffects(sideEffects);
       });
